@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup Page</title>
+  <!-- Include Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+
+  <style>
+    /* Add some basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      width: 300px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div id="home-page" style="display:none;">
+    <h2>Welcome to the Home Page</h2>
+    <div id="user-info"></div>
+  </div>
+
+  <form id="signup-form">
+    <label for="fname">First Name:</label>
+    <input type="text" id="fname" name="fname" required>
+
+    <label for="lname">Last Name:</label>
+    <input type="text" id="lname" name="lname" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="button" onclick="signup()">Sign Up</button>
+  </form>
+
+  <script>
+ const firebaseConfig = {
+  apiKey: "AIzaSyAYoFx1sX6NxODWMzihpDM0vOONRpsnOJE",
+  authDomain: "webproject-ce13d.firebaseapp.com",
+  projectId: "webproject-ce13d",
+  storageBucket: "webproject-ce13d.appspot.com",
+  messagingSenderId: "704519142957",
+  appId: "1:704519142957:web:b67fe09f00844c84ad82a4"
+};
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    function signup() {
+      var fname = document.getElementById('fname').value;
+      var lname = document.getElementById('lname').value;
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
+
+      // Create user with email and password
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(function(userCredential) {
+          // Save additional user data to Firebase database
+          var user = userCredential.user;
+        firebase.database().ref('users/' + user.uid).set({
+          firstName: fname,
+          lastName: lname,
+          email: email
+        });
+
+        // Reset form fields to null
+        document.getElementById('fname').value = '';
+        document.getElementById('lname').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+
+        alert('Signup successful!');
+        window.location.href = "game.html"
+        //showHomePage(user);
+        })
+        .catch(function(error) {
+          // Handle errors
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(errorMessage);
+        });
+    }
+    // function showHomePage(user) {
+    //   // Hide signup form
+    //   document.getElementById('signup-form').style.display = 'none';
+
+    //   // Show home page
+    //   var homePage = document.getElementById('home-page');
+    //   homePage.style.display = 'flex';
+
+    //   // Display user information
+    //   var userInfo = document.getElementById('user-info');
+    //   userInfo.innerHTML = `<div>Name: ${user.firstName}</div><div>Email: ${user.email}</div>`;
+    // }
+  </script>
+
+</body>
+</html>
